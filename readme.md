@@ -12,3 +12,4 @@ Keyrum með:
 npm install
 node main.js
 ```
+# v1v2
