@@ -75,13 +75,33 @@ async function writeHtml(data) {
   fs.writeFile(htmlFilePath, htmlContent, 'utf8');
 }
 
+async function fileExists(path) {
+  try {
+    await fs.readFile(path);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
 /**
  *
  * @param {unknown} data
  * @returns {any}
  */
-function parseIndexJson(data) {
-  return data;
+async function parseIndexJson(data) {
+  const validated = [];
+  for (let i = 0; i < data.length; i++) {
+    const exists = await fileExists(`./data/${data[i].file}`);
+    if (
+    data[i].hasOwnProperty("file") && 
+    data[i].hasOwnProperty("title") &&
+    exists
+    ){
+      validated.push(data[i]);
+    }
+  };
+  return validated;
 }
 
 /**
@@ -93,11 +113,9 @@ function parseIndexJson(data) {
 async function main() {
   const indexJson = await readJson(INDEX_PATH);
 
-  const indexData = parseIndexJson(indexJson);
+  const indexData = await parseIndexJson(indexJson);
 
   writeHtml(indexData);
-
-  console.log(indexData);
 
   /*
   if (!Array.isArray(indexData)) {
