@@ -54,6 +54,31 @@ async function writeHtml(data) {
   fs.writeFile(htmlFilePath, htmlContent, 'utf8');
 }
 
+/**
+ * Skrifa HTML fyrir yfirlit í index.html
+ * @param {any} data Gögn til að skrifa
+ * @returns {Promise<void>}
+ */
+async function writeHtml2(data) {
+  const htmlFilePath = `dist/${data.file.replace('.json', '.html')}`;
+  
+  const htmlContent = `
+<!doctype html>
+<html>
+  <head>
+    <title>Verkefni 1</title>
+  </head>
+  <body>
+    <ul>
+    
+    </ul>
+  </body>
+</html>
+`;
+
+  fs.writeFile(htmlFilePath, htmlContent, 'utf8');
+}
+
 async function fileExists(path) {
   try {
     await fs.readFile(path);
@@ -100,6 +125,10 @@ async function main() {
     }),
   )).filter((item) => item != null && item.content != null);
   writeHtml(allData);
+
+  allData.map(async (data) => {
+    writeHtml2(data);
+  })
 }
 
 main();

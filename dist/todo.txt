@@ -1,1 +1,0 @@
-ekki tracka dist í git

@@ -1,7 +1,4 @@
-# Vefforritun 2 2025, verkefni 1, vinnsla í tímum
-
-Grunnur/partar af [verkefni 1](https://github.com/vefforritun/vef2-2025-v1) unnir í fyrirlestrartímum.
-
+## Vefforritun 2 2025, verkefni 1
 ## Keyrsla
 
 Þarf node útgáfu 22 að minnsta kosti.
