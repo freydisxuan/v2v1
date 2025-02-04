@@ -35,34 +35,13 @@ async function readJson(filePath) {
 async function writeHtml(data) {
   const htmlFilePath = 'dist/index.html';
 
-  /*
-  <ul>
-    <li>HTML</li>
-    <li>CSS</li>
-  */
-
-  //let html = '';
-
-  /*
-  for (let i = 0; i < data.length; i++) {
-    html += `<li>${data[i].title}</li>\n`;
-  }
-  */
-
-  /*
-  for (let item of data) {
-    html += `<li>${item.title}</li>\n`;
-  }
-  */
-
-  const html = data.map((item) => `<li>${item.title}</li>`).join('\n');
-
-  // EKKI GOTT HTML!
+  const html = data.map((item) => `<li><a href="./${item.file.replace('.json','.html')}">${item.title}</a></li>`).join('\n');
+  
   const htmlContent = `
 <!doctype html>
 <html>
   <head>
-    <title>v1</title>
+    <title>Verkefni 1</title>
   </head>
   <body>
     <ul>
@@ -112,26 +91,15 @@ async function parseIndexJson(data) {
  */
 async function main() {
   const indexJson = await readJson(INDEX_PATH);
-
   const indexData = await parseIndexJson(indexJson);
-
-  writeHtml(indexData);
-
-  /*
-  if (!Array.isArray(indexData)) {
-    console.error('index.json is not an array. Check the file format.');
-    return [];
-  }
-
-  // Read other JSON files listed in index.json
-  const allData = await Promise.all(
+  const allData = (await Promise.all(
     indexData.map(async (item) => {
       const filePath = `./data/${item.file}`;
       const fileData = await readJson(filePath);
-      return fileData ? { ...item, content: fileData } : null;
+      return fileData ? { ...item, content: fileData.title && fileData.questions ? fileData : null} : null;
     }),
-  );
-  */
+  )).filter((item) => item != null && item.content != null);
+  writeHtml(allData);
 }
 
 main();
