@@ -28,6 +28,25 @@ async function readJson(filePath) {
 }
 
 /**
+ * 
+ * @param {*} unsafeText Tekur inn texta sem á að escape-a
+ * @returns öruggum javascript texta
+ */
+
+function escapeHtml(unsafeText) {
+  if (typeof unsafeText !== "string") {
+    return "";
+  }
+
+  return unsafeText
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+/**
  * Skrifa HTML fyrir yfirlit í index.html
  * @param {any} data Gögn til að skrifa
  * @returns {Promise<void>}
@@ -55,28 +74,56 @@ async function writeHtml(data) {
 }
 
 /**
- * Skrifa HTML fyrir yfirlit í index.html
+ * Skrifa HTML fyrir efni síður HTML, CSS, JS
  * @param {any} data Gögn til að skrifa
  * @returns {Promise<void>}
  */
 async function writeHtml2(data) {
   const htmlFilePath = `dist/${data.file.replace('.json', '.html')}`;
-  
+
+  if (!data.content || !Array.isArray(data.content.questions)) {
+    console.error(`No valid questions found for ${data.file}`);
+    return;
+  }
+
+  const questionsHtml = data.content.questions.map((q, index) => {
+    if (!q.answers || !Array.isArray(q.answers)) {
+      console.warn(`Skipping question ${index} in ${data.file} due to invalid answers.`);
+      return '';
+    }
+
+    const validAnswers = q.answers.filter(a => a.hasOwnProperty("answer") && a.hasOwnProperty("correct"));
+    const answersHtml = validAnswers.map((answer, ansIndex) => `
+      <label>
+        <input type="radio" name="q${index}" value="${escapeHtml(answer.answer)}">
+        ${escapeHtml(answer.answer)}
+      </label><br>
+    `).join('');
+
+    return `
+      <div class="question">
+        <p><strong>${escapeHtml(q.question)}</strong></p>
+        ${answersHtml}
+      </div>
+    `;
+  }).join('');
+
   const htmlContent = `
-<!doctype html>
-<html>
+  <!DOCTYPE html>
+  <html>
   <head>
-    <title>Verkefni 1</title>
+    <title>${data.content.title}</title>
   </head>
   <body>
-    <ul>
-    
-    </ul>
+    <h2>${data.content.title}</h2>
+    <form id="quiz-form">
+      ${questionsHtml}
+    </form>
   </body>
-</html>
-`;
+  </html>
+    `;
 
-  fs.writeFile(htmlFilePath, htmlContent, 'utf8');
+  await fs.writeFile(htmlFilePath, htmlContent, 'utf8');
 }
 
 async function fileExists(path) {
@@ -132,38 +179,3 @@ async function main() {
 }
 
 main();
-
-/*
-// Eftirfarandi kóði kom frá ChatGTP eftir að hafa gefið
-// MJÖG einfalt prompt ásamt allri verkefnalýsingu
-async function readAllData() {
-  const indexPath = './data/index.json';
-
-  try {
-    // Read index.json
-    const indexData = await readJSON(indexPath);
-
-    if (!Array.isArray(indexData)) {
-      console.error('index.json is not an array. Check the file format.');
-      return [];
-    }
-
-    // Read other JSON files listed in index.json
-    const allData = await Promise.all(
-      indexData.map(async (item) => {
-        const filePath = `./data/${item.file}`;
-        const fileData = await readJSON(filePath);
-        return fileData ? { ...item, content: fileData } : null;
-      }),
-    );
-
-    return allData.filter(Boolean); // Remove null entries if any file failed to load
-  } catch (error) {
-    console.error('Error reading data files:', error.message);
-    return [];
-  }
-}
-
-
-readAllData().then((data) => console.log(data));
-*/
