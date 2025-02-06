@@ -17,16 +17,9 @@ export async function readJson(filePath) {
     console.error(`Error reading file ${filePath}:`, error.message);
     return null;
   }
-
-  try {
     const parsed = JSON.parse(data);
     return parsed;
-    //þetta er expected throw ætla ekki að handlea errorin :P
-    /*eslint-disable-next-line no-unused-vars*/
-  } catch (error) {
-    console.error('error parsing data as json');
-    return null;
-  }
+
 }
 
 /**
@@ -48,7 +41,7 @@ export function escapeHtml(unsafeText) {
     .replace(/'/g, "&#039;");
 }
 
-function stringToHtml(str) {
+export function stringToHtml(str) {
   return escapeHtml(str)
       .split('\n\n')
       .map((line) => `<p>${line.replace(/\n/g, '<br>')}</p>`)
@@ -62,12 +55,8 @@ function stringToHtml(str) {
  * @param {any} data Gögn til að skrifa
  * @returns {Promise<void>}
  */
-async function writeHtml(data) {
-  if (!(await folderExists('dist'))) {
-    await fs.mkdir('dist');
-  }
-  const htmlFilePath = 'dist/index.html';
-
+  export function writeHtml(data) {
+ 
   const html = data.map((item) => `<li><a href="./${item.file.replace('.json','.html')}">${item.title}</a></li>`).join('\n');
   
   const htmlContent = `
@@ -88,8 +77,7 @@ async function writeHtml(data) {
   </body>
 </html>
 `;
-
-  fs.writeFile(htmlFilePath, htmlContent, 'utf8');
+return htmlContent;
 }
 
 /**
@@ -163,7 +151,7 @@ async function writeHtml2(data) {
           allAnswered = false;
         } else {
           const correctAnswer = question.querySelector('input[name="q' + index + '"][data-correct="true"]');
-
+          
           if (selectedAnswer === correctAnswer) {
             selectedAnswer.parentElement.classList.add('correct');
           } else {
@@ -239,7 +227,7 @@ export async function folderExists(path) {
  * @param {unknown} data
  * @returns {any}
  */
-async function parseIndexJson(data) {
+export async function parseIndexJson(data) {
   const validated = [];
   for (let i = 0; i < data.length; i++) {
     const exists = await fileExists(`./data/${data[i].file}`);
@@ -261,8 +249,7 @@ async function parseIndexJson(data) {
  * 3. Skrifar út HTML
  */
 async function main() {
-  const indexJson = await readJson(INDEX_PATH);
-  const indexData = await parseIndexJson(indexJson);
+  const indexData = await parseIndexJson(await readJson(INDEX_PATH));
   const allData = (await Promise.all(
     indexData.map(async (item) => {
       const filePath = `./data/${item.file}`;
@@ -270,10 +257,15 @@ async function main() {
       return fileData ? { ...item, content: fileData.title && fileData.questions ? fileData : null} : null;
     }),
   )).filter((item) => item != null && item.content != null);
-  await writeHtml(allData);
+  if (!(await folderExists('dist'))) {
+    await fs.mkdir('dist');
+  }
+  const htmlContent = writeHtml(allData);
+  fs.writeFile("dist/index.html", htmlContent, 'utf8');
 
   allData.map(async (data) => {
    writeHtml2(data);
+   fs.writeFile()
   })
 }
 
