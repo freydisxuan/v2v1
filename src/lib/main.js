@@ -48,6 +48,15 @@ function escapeHtml(unsafeText) {
     .replace(/'/g, "&#039;");
 }
 
+function stringToHtml(str) {
+  return escapeHtml(str)
+      .split('\n\n')
+      .map((line) => `<p>${line.replace(/\n/g, '<br>')}</p>`)
+      .join('')
+      .replace(/\n/g, '<br>')
+      .replace(/ {2}/g, '&nbsp;&nbsp;');
+}
+
 /**
  * Skrifa HTML fyrir yfirlit í index.html
  * @param {any} data Gögn til að skrifa
@@ -112,7 +121,7 @@ async function writeHtml2(data) {
 
     return `
       <div class="question">
-        <p><strong>${escapeHtml(q.question)}</strong></p>
+        <p><strong>${stringToHtml(q.question)}</strong></p>
         ${answersHtml}
       </div>
     `;
