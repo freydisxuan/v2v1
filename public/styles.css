@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, Arial, sans-serif, sans-serif;
     background-color: #f4f4f4;
     color: #333;
     margin: 0;
@@ -11,14 +11,21 @@ body {
   h2 {
     color: #222;
     margin-bottom: 20px;
+    text-align: center;
+  }
+
+  ul {
+    padding: 0px;
   }
 
   li {
-    list-style: none
+    display: inline-block;
+    list-style: none;
   }
 
   a {
     display: inline-block;
+    align-items: center;
     margin: 5px 0;
     padding: 5px 10px;     
     background-color: black;
@@ -48,10 +55,12 @@ body {
   /* Answer Feedback */
 .correct {
     background-color: #4CAF50 !important; 
+    border-radius: 5px;
     color: white !important;
 }
 
 .incorrect {
     background-color: #f44336 !important; 
+    border-radius: 5px;
     color: white !important;
 }

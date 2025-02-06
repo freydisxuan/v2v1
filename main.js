@@ -21,6 +21,8 @@ async function readJson(filePath) {
   try {
     const parsed = JSON.parse(data);
     return parsed;
+    //þetta er expected throw ætla ekki að handlea errorin :P
+    /*eslint-disable-next-line no-unused-vars*/
   } catch (error) {
     console.error('error parsing data as json');
     return null;
@@ -63,10 +65,11 @@ async function writeHtml(data) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verkefni 1</title>
-  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../public/styles.css">
   </head>
   <body>
     <h2>Þetta er vissulega spurningaleikur :D</h2>
+    <p>Veldu flokk tbg</p>
     <ul>
       ${html}
     </ul>
@@ -96,8 +99,8 @@ async function writeHtml2(data) {
       return '';
     }
 
-    const validAnswers = q.answers.filter(a => a.hasOwnProperty("answer") && a.hasOwnProperty("correct"));
-    const answersHtml = validAnswers.map((answer, ansIndex) => `
+    const validAnswers = q.answers.filter(a => a.hasOwnProperty.call(a,"answer") && a.hasOwnProperty.call(a,"correct"));
+    const answersHtml = validAnswers.map((answer) => `
       <label>
       <input type="radio" name="q${index}" value="${escapeHtml(answer.answer)}" ${answer.correct ? 'data-correct="true"' : ''}>
         ${escapeHtml(answer.answer)}
@@ -119,7 +122,7 @@ async function writeHtml2(data) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${data.content.title}</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../public/styles.css">
   </head>
   <body>
   <h2>${data.content.title}</h2>
@@ -136,7 +139,6 @@ async function writeHtml2(data) {
         const selectedAnswer = question.querySelector('input[name="q' + index + '"]:checked');
         const allAnswers = question.querySelectorAll('label');
 
-        // Remove previous highlights
         allAnswers.forEach(label => {
           label.classList.remove('correct', 'incorrect');
         });
@@ -154,10 +156,6 @@ async function writeHtml2(data) {
           }
         }
       });
-
-      if (!allAnswered) {
-        alert("Þú verður að svara öllum spurningum áður en þú getur sent!");
-      }
     }
 
     function enableSubmitButton() {
@@ -191,6 +189,8 @@ async function fileExists(path) {
   try {
     await fs.readFile(path);
     return true;
+    //þetta er expected throw ætla ekki að handlea errorin :P
+    /*eslint-disable-next-line no-unused-vars*/
   } catch(e) {
     return false;
   }
@@ -206,8 +206,8 @@ async function parseIndexJson(data) {
   for (let i = 0; i < data.length; i++) {
     const exists = await fileExists(`./data/${data[i].file}`);
     if (
-    data[i].hasOwnProperty("file") && 
-    data[i].hasOwnProperty("title") &&
+    data[i].hasOwnProperty.call(data[i], "file") && 
+    data[i].hasOwnProperty.call(data[i], "title") &&
     exists
     ){
       validated.push(data[i]);
