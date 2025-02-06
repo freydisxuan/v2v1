@@ -8,7 +8,7 @@ const INDEX_PATH = './data/index.json';
  * @param {string} filePath Skráin sem á að lesa
  * @returns {Promise<unknown | null>} Les skrá úr `filePath` og skilar innihaldi. Skilar `null` ef villa kom upp.
  */
-async function readJson(filePath) {
+export async function readJson(filePath) {
   console.log('starting to read', filePath);
   let data;
   try {
@@ -35,7 +35,7 @@ async function readJson(filePath) {
  * @returns öruggum javascript texta
  */
 
-function escapeHtml(unsafeText) {
+export function escapeHtml(unsafeText) {
   if (typeof unsafeText !== "string") {
     return "";
   }
@@ -212,7 +212,7 @@ async function writeHtml2(data) {
   await fs.writeFile(htmlFilePath, htmlContent, 'utf8');
 }
 
-async function fileExists(path) {
+export async function fileExists(path) {
   try {
     await fs.readFile(path);
     return true;
@@ -277,4 +277,9 @@ async function main() {
   })
 }
 
-main();
+if (import.meta.url.endsWith(process.argv[1])) {
+  main().catch((error) => {
+      console.error("Fatal error:", error);
+      process.exit(1);
+  });
+}
