@@ -1,6 +1,5 @@
 //????????????
 // keyra coverage cmd 
-import { write } from 'fs-extra';
 import {writeHtml, readJson, escapeHtml, fileExists, folderExists, parseIndexJson, stringToHtml} from './main.js';
 import { describe, expect, it} from '@jest/globals';
 
