@@ -125,36 +125,64 @@ async function writeHtml2(data) {
   <h2>${data.content.title}</h2>
   <form id="quiz-form">
     ${questionsHtml}
-    <button type="button" onclick="checkAnswers()">Senda svör</button>
+    <button type="button" id="submit-btn" onclick="checkAnswers()" disabled>Senda svör</button>
   </form>
   <script>
-  function checkAnswers() {
-    const questions = document.querySelectorAll('.question');
+    function checkAnswers() {
+      const questions = document.querySelectorAll('.question');
+      let allAnswered = true;
 
-    questions.forEach((question, index) => {
-      const selectedAnswer = question.querySelector('input[name="q' + index + '"]:checked');
-      const allAnswers = question.querySelectorAll('label');
+      questions.forEach((question, index) => {
+        const selectedAnswer = question.querySelector('input[name="q' + index + '"]:checked');
+        const allAnswers = question.querySelectorAll('label');
 
-      allAnswers.forEach(label => {
-        label.classList.remove('correct', 'incorrect');
+        // Remove previous highlights
+        allAnswers.forEach(label => {
+          label.classList.remove('correct', 'incorrect');
+        });
+
+        if (!selectedAnswer) {
+          allAnswered = false; // Mark as incomplete if any question is unanswered
+        } else {
+          const correctAnswer = question.querySelector('input[name="q' + index + '"][data-correct="true"]');
+
+          if (selectedAnswer === correctAnswer) {
+            selectedAnswer.parentElement.classList.add('correct');
+          } else {
+            selectedAnswer.parentElement.classList.add('incorrect');
+            correctAnswer.parentElement.classList.add('correct');
+          }
+        }
       });
 
-      if (selectedAnswer) {
-        const correctAnswer = question.querySelector('input[name="q' + index + '"][data-correct="true"]');
-
-        if (selectedAnswer === correctAnswer) {
-          selectedAnswer.parentElement.classList.add('correct');
-        } else {
-          selectedAnswer.parentElement.classList.add('incorrect');
-          correctAnswer.parentElement.classList.add('correct');
-        }
+      if (!allAnswered) {
+        alert("Þú verður að svara öllum spurningum áður en þú getur sent!");
       }
+    }
+
+    function enableSubmitButton() {
+      const questions = document.querySelectorAll('.question');
+      const submitBtn = document.getElementById('submit-btn');
+      let allAnswered = true;
+
+      questions.forEach((question, index) => {
+        const selectedAnswer = question.querySelector('input[name="q' + index + '"]:checked');
+        if (!selectedAnswer) {
+          allAnswered = false;
+        }
+      });
+
+      submitBtn.disabled = !allAnswered;
+    }
+
+    document.querySelectorAll('input[type="radio"]').forEach(input => {
+      input.addEventListener('change', enableSubmitButton);
     });
-  }
-</script>
+  </script>
   </body>
   </html>
-    `;
+`;
+
 
   await fs.writeFile(htmlFilePath, htmlContent, 'utf8');
 }
