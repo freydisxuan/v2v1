@@ -6,9 +6,23 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-     "start": "node main.js"
+    "start": "node main.js",
+    "build": "run-s build:clean build:copy-public build:generate",
+    "build:clean": "rimraf dist",
+    "build:copy-public": "node copy-files.js",
+    "build:generate": "node main.js",
+    "dev": "run-p dev:watch dev:browser-sync",
+    "dev:watch": "chokidar \"**/*.js\" \"public/styles.css\" -c 'npm run build'",
+    "dev:browser-sync": "browser-sync start --serveStatic ./dist --server --files './dist/**/.*, **/*.js, **/*.css' --reloadDelay 500",
+    "lint": "eslint src"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "fs-extra": "^11.3.0",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^6.0.1"
+  }
 }
