@@ -14,6 +14,13 @@ body {
     text-align: center;
   }
 
+  #header {
+    display: flex;
+    align-items: center; /* Aligns items vertically */
+    gap: 10px; /* Space between back button and title */
+    justify-content: center;
+  }
+
   ul {
     padding: 0px;
   }
@@ -23,7 +30,7 @@ body {
     list-style: none;
   }
 
-  a {
+  a, button {
     display: inline-block;
     align-items: center;
     margin: 5px 0;
@@ -32,9 +39,16 @@ body {
     color: white;          
     text-decoration: none;  
     border-radius: 5px;  
-    font-size: 16px;        
+    font-size: 16px; 
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;  
   }
   
+  a:hover, button:hover {
+    background-color: #333;
+    transform: scale(1.05); 
+  }
+
   .question {
     background: white;
     padding: 15px;
@@ -52,7 +66,7 @@ body {
     cursor: pointer;
   }
 
-  /* Answer Feedback */
+  /* answer feedback */
 .correct {
     background-color: #4CAF50 !important; 
     border-radius: 5px;

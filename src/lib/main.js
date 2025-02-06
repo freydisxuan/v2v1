@@ -128,9 +128,13 @@ async function writeHtml2(data) {
     <link rel="stylesheet" href="../public/styles.css">
   </head>
   <body>
+  <section id="header">
+  <a href="index.html" id="back-btn"><</a>
   <h2>${data.content.title}</h2>
+  </section>
   <form id="quiz-form">
     ${questionsHtml}
+    <button type="button" id="clear-btn" onclick="clearAnswers()">Hreinsa svör</button>
     <button type="button" id="submit-btn" onclick="checkAnswers()" disabled>Senda svör</button>
   </form>
   <script>
@@ -147,7 +151,7 @@ async function writeHtml2(data) {
         });
 
         if (!selectedAnswer) {
-          allAnswered = false; // Mark as incomplete if any question is unanswered
+          allAnswered = false;
         } else {
           const correctAnswer = question.querySelector('input[name="q' + index + '"][data-correct="true"]');
 
@@ -176,6 +180,18 @@ async function writeHtml2(data) {
       submitBtn.disabled = !allAnswered;
     }
 
+    function clearAnswers() {
+      document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.checked = false;
+      });
+
+      document.querySelectorAll('.correct, .incorrect').forEach(label => {
+        label.classList.remove('correct', 'incorrect');
+      });
+
+      document.getElementById('submit-btn').disabled = true;
+    }
+
     document.querySelectorAll('input[type="radio"]').forEach(input => {
       input.addEventListener('change', enableSubmitButton);
     });
@@ -183,7 +199,6 @@ async function writeHtml2(data) {
   </body>
   </html>
 `;
-
 
   await fs.writeFile(htmlFilePath, htmlContent, 'utf8');
 }
