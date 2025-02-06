@@ -60,9 +60,13 @@ async function writeHtml(data) {
 <!doctype html>
 <html>
   <head>
-    <title>Verkefni 1</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verkefni 1</title>
+  <link rel="stylesheet" href="../styles.css">
   </head>
   <body>
+    <h2>Þetta er vissulega spurningaleikur :D</h2>
     <ul>
       ${html}
     </ul>
@@ -95,7 +99,7 @@ async function writeHtml2(data) {
     const validAnswers = q.answers.filter(a => a.hasOwnProperty("answer") && a.hasOwnProperty("correct"));
     const answersHtml = validAnswers.map((answer, ansIndex) => `
       <label>
-        <input type="radio" name="q${index}" value="${escapeHtml(answer.answer)}">
+      <input type="radio" name="q${index}" value="${escapeHtml(answer.answer)}" ${answer.correct ? 'data-correct="true"' : ''}>
         ${escapeHtml(answer.answer)}
       </label><br>
     `).join('');
@@ -112,13 +116,42 @@ async function writeHtml2(data) {
   <!DOCTYPE html>
   <html>
   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${data.content.title}</title>
+    <link rel="stylesheet" href="../styles.css">
   </head>
   <body>
-    <h2>${data.content.title}</h2>
-    <form id="quiz-form">
-      ${questionsHtml}
-    </form>
+  <h2>${data.content.title}</h2>
+  <form id="quiz-form">
+    ${questionsHtml}
+    <button type="button" onclick="checkAnswers()">Senda svör</button>
+  </form>
+  <script>
+  function checkAnswers() {
+    const questions = document.querySelectorAll('.question');
+
+    questions.forEach((question, index) => {
+      const selectedAnswer = question.querySelector('input[name="q' + index + '"]:checked');
+      const allAnswers = question.querySelectorAll('label');
+
+      allAnswers.forEach(label => {
+        label.classList.remove('correct', 'incorrect');
+      });
+
+      if (selectedAnswer) {
+        const correctAnswer = question.querySelector('input[name="q' + index + '"][data-correct="true"]');
+
+        if (selectedAnswer === correctAnswer) {
+          selectedAnswer.parentElement.classList.add('correct');
+        } else {
+          selectedAnswer.parentElement.classList.add('incorrect');
+          correctAnswer.parentElement.classList.add('correct');
+        }
+      }
+    });
+  }
+</script>
   </body>
   </html>
     `;
