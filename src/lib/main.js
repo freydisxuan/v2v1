@@ -54,6 +54,9 @@ function escapeHtml(unsafeText) {
  * @returns {Promise<void>}
  */
 async function writeHtml(data) {
+  if (!(await folderExists('dist'))) {
+    await fs.mkdir('dist');
+  }
   const htmlFilePath = 'dist/index.html';
 
   const html = data.map((item) => `<li><a href="./${item.file.replace('.json','.html')}">${item.title}</a></li>`).join('\n');
@@ -196,6 +199,17 @@ async function fileExists(path) {
   }
 }
 
+export async function folderExists(path) {
+  try {
+    await fs.readdir(path);
+  // Þetta er expected throw, ætla ekki að handlea errorinn 😛
+  /* eslint-disable-next-line no-unused-vars */
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 /**
  *
  * @param {unknown} data
@@ -232,10 +246,10 @@ async function main() {
       return fileData ? { ...item, content: fileData.title && fileData.questions ? fileData : null} : null;
     }),
   )).filter((item) => item != null && item.content != null);
-  writeHtml(allData);
+  await writeHtml(allData);
 
   allData.map(async (data) => {
-    writeHtml2(data);
+   writeHtml2(data);
   })
 }
 
