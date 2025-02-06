@@ -14,7 +14,7 @@
     "dev": "run-p dev:watch dev:browser-sync",
     "dev:watch": "chokidar \"**/*.js\" \"public/styles.css\" -c 'npm run build'",
     "dev:browser-sync": "browser-sync start --serveStatic ./dist --server --files './dist/**/.*, **/*.js, **/*.css' --reloadDelay 500",
-    "lint": "eslint src"
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
