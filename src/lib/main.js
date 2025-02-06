@@ -151,7 +151,7 @@ async function writeHtml2(data) {
           allAnswered = false;
         } else {
           const correctAnswer = question.querySelector('input[name="q' + index + '"][data-correct="true"]');
-          
+
           if (selectedAnswer === correctAnswer) {
             selectedAnswer.parentElement.classList.add('correct');
           } else {
@@ -214,7 +214,7 @@ export async function fileExists(path) {
 export async function folderExists(path) {
   try {
     await fs.readdir(path);
-  // Þetta er expected throw, ætla ekki að handlea errorinn 😛
+  // Þetta er expected throw, ætla ekki að handlea errorinn
   /* eslint-disable-next-line no-unused-vars */
   } catch (e) {
     return false;
@@ -264,8 +264,7 @@ async function main() {
   fs.writeFile("dist/index.html", htmlContent, 'utf8');
 
   allData.map(async (data) => {
-   writeHtml2(data);
-   fs.writeFile()
+   await writeHtml2(data);
   })
 }
 
