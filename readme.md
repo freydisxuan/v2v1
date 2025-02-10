@@ -9,3 +9,4 @@ Keyrum með:
 npm install
 node main.js
 ```
+https://v2v1-fre.netlify.app/
